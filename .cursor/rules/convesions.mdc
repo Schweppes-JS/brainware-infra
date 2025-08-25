@@ -1,0 +1,119 @@
+---
+description: "This document describes the conventions and best practices used in the brainware-infra project."
+globs:
+alwaysApply: true
+---
+
+## 1. Repository Structure
+
+    brainware-infra/
+    │── terraform/      # Infra provisioning (VMs, networks, storage)
+    │   ├── modules/    # Reusable modules (e.g., vm, k8s-node, db-server)
+    │   ├── envs/       # Environment configs (lab, prod, etc.)
+    │   └── main.tf
+    │
+    │── ansible/        # Configuration management
+    │   ├── inventories/
+    │   │   ├── lab/
+    │   │   └── prod/
+    │   ├── playbooks/
+    │   └── roles/
+    │
+    │── jenkins/        # CI/CD pipelines
+    │   ├── Jenkinsfile
+    │   └── pipelines/
+    │
+    │── docs/           # Documentation, diagrams
+    │── .gitignore
+    │── README.md
+
+## 2. Naming Conventions
+
+- **Terraform**
+
+  - Use `snake_case` for resource names (e.g., `proxmox_vm_qemu.web_server`).
+  - Organize code into `modules/` (e.g., `vm`, `k8s-node`, `db-server`).
+  - Environment separation: `terraform/envs/lab/main.tf`.
+
+- **Ansible**
+
+  - Inventories per environment: `ansible/inventories/lab/hosts.ini`.
+  - Playbooks grouped by service: `deploy_app.yml`, `configure_k8s.yml`.
+  - Roles by function: `roles/docker/`, `roles/nginx/`.
+
+- **Jenkins**
+  - Main `Jenkinsfile` in repo root.
+  - Shared pipelines in `jenkins/pipelines/`.
+  - Branch-based pipelines (`feature/*`, `main`, `prod`).
+
+## 3. Git & CI Conventions
+
+- **Branching**
+
+  - `main` → stable code.
+  - `dev` → testing environment.
+  - `feature/*` → per task or experiment.
+
+- **Commits** (use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)):
+  - `feat(terraform): add proxmox vm module`
+  - `fix(ansible): correct nginx role path`
+  - `ci(jenkins): update pipeline with terraform plan stage`
+
+---
+
+## 4. Secrets & State Management
+
+- Never commit:
+  - `*.tfstate`, `*.tfvars`, `.vault_pass`, SSH keys.
+- Always use `.gitignore` for sensitive files.
+- Use secret managers:
+  - **Terraform** → remote state (S3/GCS/Consul/etc.).
+  - **Ansible** → Ansible Vault.
+  - **Jenkins** → credentials store.
+
+---
+
+## 5. Documentation
+
+- `README.md` → project overview and quickstart.
+- `docs/` → architecture diagrams, workflows, examples.
+- Each tool’s folder (`terraform/`, `ansible/`, `jenkins/`) should contain its own `README.md`.
+
+---
+
+## 6. Workflow Convention
+
+1. Create infra changes → commit → PR.
+2. CI runs automatic checks:
+   - `terraform fmt` + `terraform validate`
+   - `ansible-lint`
+   - `terraform plan` (on PR only, no apply)
+3. Merge → Jenkins runs:
+   - `terraform apply`
+   - `ansible-playbook`
+
+---
+
+## 7. Modules and Roles
+
+- Terraform → reusable modules in `terraform/modules/`.
+- Ansible → reusable roles in `ansible/roles/`.
+- Follow DRY principle: **Don’t Repeat Yourself**.
+
+---
+
+## 8. Environment Separation
+
+- All environments must be isolated:
+  - Terraform → `terraform/envs/lab/`, `terraform/envs/prod/`.
+  - Ansible → inventories for each env.
+  - Jenkins → deploys only to the environment specified.
+
+---
+
+## 9. Quality & Style
+
+- Run `terraform fmt` before committing.
+- Run `ansible-lint` for playbooks.
+- Keep `Jenkinsfile` clean with stages: **validate → plan → apply → configure → deploy**.
+- Write meaningful commit messages and PR descriptions.

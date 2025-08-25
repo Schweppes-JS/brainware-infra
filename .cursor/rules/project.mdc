@@ -1,0 +1,14 @@
+---
+description: "This document describes the main idia of the brainware-infra project"
+globs:
+alwaysApply: true
+---
+
+It is designed to provision, configure, and manage virtual machines and services in a reproducible and automated way.
+
+## Goals
+
+- Maintain a fully automated and reproducible homelab environment.
+- Keep infrastructure and configuration version-controlled.
+- Experiment with DevOps practices including IaC, CI/CD, and automated provisioning.
+- Ensure modular, organized, and maintainable code.
