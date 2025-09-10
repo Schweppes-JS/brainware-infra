@@ -19,12 +19,12 @@ resource "proxmox_vm_qemu" "vm" {
   scsihw      = "virtio-scsi-pci"
   disk {
     type    = "scsi"
-    storage = "local-lvm"
+    storage = var.storage_pool
     size    = var.disk_size
     ssd     = 1
   }
   network {
-    bridge = "vmbr0"
+    bridge = var.network_bridge
     model  = "virtio"
   }
   agent   = 1

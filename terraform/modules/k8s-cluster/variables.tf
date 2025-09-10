@@ -1,12 +1,12 @@
 variable "cluster_name" {
   type        = string
   description = "Name of the Kubernetes cluster"
-  default     = "k8s-cluster"
 }
 
 variable "target_node" {
   type        = string
   description = "Target Proxmox node name"
+  default     = "shvets"
 }
 
 variable "template_id" {
@@ -27,82 +27,59 @@ variable "network_bridge" {
 }
 
 # Master node configuration
+variable "master_count" {
+  type        = number
+  description = "Number of master nodes"
+  default     = 2
+}
 variable "master_vmid_start" {
   type        = number
   description = "Starting VM ID for master nodes"
-  default     = 100
 }
 
 variable "master_cores" {
   type        = number
   description = "Number of CPU cores for master nodes"
-  default     = 2
+  default     = 1
 }
 
 variable "master_memory" {
   type        = number
   description = "Memory size in MB for master nodes"
-  default     = 4096
+  default     = 2048
 }
 
 variable "master_disk_size" {
+  description = "Disk size for master nodes (e.g., '32G', '1T')"
   type        = string
-  description = "Disk size for master nodes"
-  default     = "32G"
+  default     = "16G"
 }
 
 # Worker node configuration
+variable "worker_count" {
+  type        = number
+  description = "Number of worker nodes"
+  default     = 4
+}
 variable "worker_vmid_start" {
   type        = number
   description = "Starting VM ID for worker nodes"
-  default     = 110
 }
 
 variable "worker_cores" {
   type        = number
   description = "Number of CPU cores for worker nodes"
-  default     = 4
+  default     = 2
 }
 
 variable "worker_memory" {
   type        = number
   description = "Memory size in MB for worker nodes"
-  default     = 8192
+  default     = 4096
 }
 
 variable "worker_disk_size" {
+  description = "Disk size for worker nodes (e.g., '32G', '1T')"
   type        = string
-  description = "Disk size for worker nodes"
-  default     = "64G"
-}
-
-# Load balancer configuration
-variable "create_load_balancer" {
-  type        = bool
-  description = "Whether to create a load balancer for master nodes"
-  default     = true
-}
-
-variable "lb_vmid" {
-  type        = number
-  description = "VM ID for load balancer"
-  default     = 120
-}
-
-variable "lb_cores" {
-  type        = number
-  description = "Number of CPU cores for load balancer"
-  default     = 1
-}
-
-variable "lb_memory" {
-  type        = number
-  description = "Memory size in MB for load balancer"
-  default     = 1024
-}
-
-variable "lb_disk_size" {
-  type        = string
-  description = "Disk size for load balancer"
-  default     = "16G"
+  default     = "32G"
 }

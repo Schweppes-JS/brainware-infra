@@ -1,0 +1,14 @@
+---
+# Alpine-specific variables
+alpine:
+  admin_shell: /bin/ash
+  admin_groups:
+    - wheel
+  ssh_service_name: sshd
+
+# Ubuntu/Debian-specific variables
+ubuntu:
+  admin_shell: /bin/bash
+  admin_groups:
+    - sudo
+  ssh_service_name: ssh

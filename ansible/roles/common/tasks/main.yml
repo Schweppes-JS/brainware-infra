@@ -1,0 +1,47 @@
+---
+- name: Update package cache
+  package:
+    update_cache: yes
+  when: ansible_os_family != "Alpine"
+
+- name: Update package cache (Alpine)
+  apk:
+    update_cache: yes
+  when: ansible_os_family == "Alpine"
+
+- name: Create admin user
+  user:
+    name: "{{ admin_user }}"
+    shell: "{{ admin_shell | default('/bin/bash') }}"
+    groups: "{{ admin_groups | default(['wheel', 'sudo']) }}"
+    append: yes
+    state: present
+
+- name: Set up authorized keys for admin user
+  authorized_key:
+    user: "{{ admin_user }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ ssh_public_keys.split(',') }}"
+  when: ssh_public_keys is defined
+
+- name: Configure sudo for wheel group (Alpine)
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "^%wheel"
+    line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+    state: present
+  when: ansible_os_family == "Alpine"
+
+- name: Configure sudo for sudo group (Ubuntu/Debian)
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "^%sudo"
+    line: "%sudo ALL=(ALL:ALL) NOPASSWD: ALL"
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Restart SSH service
+  service:
+    name: "{{ ssh_service_name | default('sshd') }}"
+    state: restarted

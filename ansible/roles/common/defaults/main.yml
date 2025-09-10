@@ -1,0 +1,10 @@
+---
+# Admin user configuration
+admin_shell: /bin/bash
+admin_user: schweppes
+admin_groups:
+  - wheel
+  - sudo
+
+# SSH configuration
+ssh_service_name: sshd
