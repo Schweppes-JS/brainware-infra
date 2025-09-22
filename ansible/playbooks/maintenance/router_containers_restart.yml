@@ -1,0 +1,10 @@
+- name: Restart Docker Containers
+  hosts: router
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Restart Docker Containers
+      ansible.builtin.raw: |
+        /mnt/usb-1414f363/mi_docker/docker-binaries/docker ps -q | xargs -r /mnt/usb-1414f363/mi_docker/docker-binaries/docker restart
+        /mnt/usb-1414f363/mi_docker/docker-binaries/docker ps -a -q --filter "status=exited" | xargs -r /mnt/usb-1414f363/mi_docker/docker-binaries/docker start
+      changed_when: false

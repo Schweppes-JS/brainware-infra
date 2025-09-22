@@ -1,0 +1,25 @@
+- name: Update Virtualization
+  hosts: development,staging
+  become: true
+  tasks:
+    - name: Update package lists (Alpine)
+      ansible.builtin.command:
+        cmd: apk update
+      when: ansible_os_family == "Alpine"
+      changed_when: false
+
+    - name: Upgrade all packages (Alpine)
+      ansible.builtin.command:
+        cmd: apk upgrade
+      when: ansible_os_family == "Alpine"
+      changed_when: false
+
+    - name: Update package lists (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == "Debian"
+
+    - name: Upgrade all packages (Debian/Ubuntu)
+      ansible.builtin.apt:
+        upgrade: dist
+      when: ansible_os_family == "Debian"

@@ -6,18 +6,6 @@ terraform {
   }
 }
 
-module "development_1_nginx_proxy_manager" {
-  hostname        = "nginx-proxy-manager"
-  source          = "../../modules/containers/alpine"
-  ssh_public_keys = var.ssh_public_keys
-  network_ip      = "192.168.31.100/24"
-  target_node     = var.target_node
-  memory          = 1024
-  disk_size       = "4G"
-  cores           = 1
-  vmid            = 100
-}
-
 # module "development_k8s_cluster" {
 #   source       = "../../modules/k8s-cluster"
 #   cluster_name = "development-k8s"
@@ -37,10 +25,10 @@ module "development_1_nginx_proxy_manager" {
 # }
 
 # module "development_gitlab" {
-#   source          = "../../modules/containers/alpine"
+#   source          = "../../modules/container/alpine"
 #   hostname        = "development-gitlab"
-#   network_ip      = "192.168.31.13/24"
 #   ssh_public_keys = var.ssh_public_keys
+#   network_ip      = "192.168.31.13/24"
 #   memory          = 256
 #   disk_size       = "32G"
 #   cores           = 1

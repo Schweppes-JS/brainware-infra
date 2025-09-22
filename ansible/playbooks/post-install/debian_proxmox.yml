@@ -1,0 +1,32 @@
+---
+- name: Init Proxmox
+  hosts: pve
+  become: true
+  tasks:
+    - name: Install necessary packages
+      ansible.builtin.apt:
+        name:
+          - wget
+          - curl
+          - vim
+          - btop
+          - nano
+          - ufw
+        state: present
+
+    - name: Download SpeedTest CLI
+      ansible.builtin.get_url:
+        url: https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz
+        dest: /tmp/ookla-speedtest-1.2.0-linux-x86_64.tgz
+        mode: "0644"
+
+    - name: Extract SpeedTest CLI
+      ansible.builtin.unarchive:
+        src: /tmp/ookla-speedtest-1.2.0-linux-x86_64.tgz
+        dest: /usr/local/bin
+        remote_src: true
+
+    - name: Clean up SpeedTest archive
+      ansible.builtin.file:
+        path: /tmp/ookla-speedtest-1.2.0-linux-x86_64.tgz
+        state: absent

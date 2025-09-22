@@ -25,7 +25,7 @@ terraform {
 # }
 
 # module "development_gitlab" {
-#   source          = "../../modules/containers/alpine"
+#   source          = "../../modules/container/alpine"
 #   hostname        = "development-gitlab"
 #   network_ip      = "192.168.31.13/24"
 #   ssh_public_keys = var.ssh_public_keys

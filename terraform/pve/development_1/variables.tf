@@ -9,3 +9,9 @@ variable "target_node" {
   default     = "development-pve-1"
   type        = string
 }
+
+variable "user_password" {
+  description = "Password for the user"
+  type        = string
+  sensitive   = true
+}

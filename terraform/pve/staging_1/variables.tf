@@ -3,3 +3,15 @@ variable "ssh_public_keys" {
   type        = string
   default     = ""
 }
+
+variable "target_node" {
+  description = "Target Proxmox node to create the container on"
+  default     = "staging-pve-1"
+  type        = string
+}
+
+variable "user_password" {
+  description = "Password for the user"
+  type        = string
+  sensitive   = true
+}
