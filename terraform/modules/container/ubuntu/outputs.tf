@@ -17,8 +17,3 @@ output "container_user_name" {
   description = "Username created in the container"
   value       = var.user_name
 }
-
-output "container_vmid" {
-  description = "VM ID of the container"
-  value       = proxmox_lxc.ubuntu_lxc.vmid
-}

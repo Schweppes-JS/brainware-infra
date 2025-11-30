@@ -1,5 +1,5 @@
 - name: Update Virtualization
-  hosts: development,staging
+  hosts: development,staging,production
   become: true
   tasks:
     - name: Update package lists (Alpine)

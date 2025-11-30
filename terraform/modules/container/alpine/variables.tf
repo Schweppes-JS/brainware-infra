@@ -34,13 +34,13 @@ variable "network_ip" {
 variable "network_gateway" {
   description = "Network gateway"
   type        = string
-  default     = "192.168.31.1"
+  default     = "10.31.0.1"
 }
 
 variable "storage_pool" {
   description = "Storage pool to use for the container"
   type        = string
-  default     = "local-lvm"
+  default     = "ceph-osd"
 }
 
 variable "disk_size" {
@@ -58,6 +58,10 @@ variable "cores" {
 variable "vmid" {
   description = "VM ID for the new VM"
   type        = number
+  validation {
+    condition     = var.vmid >= 100
+    error_message = "VM ID must be greater than 100"
+  }
 }
 
 variable "memory" {

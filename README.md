@@ -7,6 +7,7 @@ This repository contains everything needed to provision, configure, and manage t
 - **Terraform** → automates VM creation and resource management on Proxmox.
 - **Ansible** → configures servers, services, and applications after provisioning.
 - **Jenkins pipelines** → CI/CD automation for builds, tests, and deployments.
+- **Scripts** → utility scripts for common operations like SSH key setup, system updates, and container management.
 
 ### Goals
 

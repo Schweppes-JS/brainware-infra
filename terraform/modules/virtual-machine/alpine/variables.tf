@@ -11,6 +11,11 @@ variable "target_node" {
 variable "vmid" {
   type        = number
   description = "VM ID for the new VM"
+
+  validation {
+    condition     = var.vmid >= 100
+    error_message = "VM ID must be greater than 100"
+  }
 }
 
 variable "memory" {
@@ -40,7 +45,7 @@ variable "template_id" {
 variable "storage_pool" {
   type        = string
   description = "Storage pool to use for the VM"
-  default     = "local-lvm"
+  default     = "ceph-osd"
 }
 
 variable "network_bridge" {
@@ -74,12 +79,12 @@ variable "ssh_public_keys" {
 }
 
 variable "static_ip" {
-  description = "Static IP address for the VM (e.g., '192.168.1.100/24')"
+  description = "Static IP address for the VM (e.g., '10.31.100.100/16')"
   type        = string
 }
 
 variable "gateway" {
   description = "Gateway IP address"
-  default     = "192.168.31.1"
+  default     = "10.31.0.1"
   type        = string
 }

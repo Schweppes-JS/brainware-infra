@@ -1,0 +1,69 @@
+---
+- name: Configure Ceph on Proxmox
+  hosts: pve
+  become: true
+  tasks:
+    - name: Install necessary packages
+      ansible.builtin.apt:
+        name:
+          - ceph
+          - ceph-mds
+          - ceph-mon
+          - ceph-osd
+        state: present
+
+    - name: Install Ceph without subscription
+      ansible.builtin.shell: pveceph install --repository no-subscription
+      args:
+        creates: /usr/bin/pveceph
+
+    - name: Initialize Ceph on main node
+      ansible.builtin.shell: pveceph init --network 10.31.0.0/16
+      when: inventory_hostname == "production-pve-1"
+
+    - name: Configure Ceph monitor, manager and OSD for production
+      ansible.builtin.shell: |
+        pveceph mon create --mon-address 10.31.100.1 
+        pveceph mgr create
+        lvremove -y /dev/pve/osb
+        lvremove -y /dev/pve/data
+        ceph auth get client.bootstrap-osd > /var/lib/ceph/bootstrap-osd/ceph.keyring
+        lvcreate -L 256G -n osb pve
+        ceph-volume lvm create --data /dev/pve/osb
+      when: inventory_hostname == "production-pve-1"
+
+    - name: Configure Ceph monitor, manager and OSD for staging
+      ansible.builtin.shell: |
+        pveceph mon create --mon-address 10.31.100.2
+        pveceph mgr create
+        lvremove -y /dev/pve/osb
+        lvremove -y /dev/pve/data
+        ceph auth get client.bootstrap-osd > /var/lib/ceph/bootstrap-osd/ceph.keyring
+        lvcreate -L 256G -n osb pve
+        ceph-volume lvm create --data /dev/pve/osb
+      when: inventory_hostname == "staging-pve-1"
+
+    - name: Configure Ceph monitor, manager and OSD for development
+      ansible.builtin.shell: |
+        pveceph mon create --mon-address 10.31.100.3
+        pveceph mgr create
+        lvremove -y /dev/pve/osb
+        lvremove -y /dev/pve/data
+        ceph auth get client.bootstrap-osd > /var/lib/ceph/bootstrap-osd/ceph.keyring
+        lvcreate -L 256G -n osb pve
+        ceph-volume lvm create --data /dev/pve/osb
+      when: inventory_hostname == "development-pve-1"
+
+    - name: Create Pool
+      ansible.builtin.shell: ceph osd pool create ceph-osd 3
+      when: inventory_hostname == "development-pve-1"
+
+    - name: Configure Proxmox cluster settings
+      ansible.builtin.shell: |
+        pvesh set /cluster/options --ha-rebalance-on-start 1
+        pvesh set /cluster/options --shutdown-policy migrate
+
+    # - name: Reboot all nodes after Ceph configuration
+    #   ansible.builtin.reboot:
+    #     reboot_timeout: 300
+    #     test_command: uptime

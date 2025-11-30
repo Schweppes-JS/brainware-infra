@@ -40,7 +40,7 @@ variable "template_id" {
 variable "storage_pool" {
   type        = string
   description = "Storage pool to use for the VM"
-  default     = "local-lvm"
+  default     = "ceph-osd"
 }
 
 variable "network_bridge" {

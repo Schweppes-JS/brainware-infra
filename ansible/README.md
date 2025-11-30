@@ -105,13 +105,13 @@ Use the deployment script from the root directory:
 After deployment, you can SSH to containers:
 
 ```bash
-ssh admin@192.168.31.13  # development-gitlab
+ssh admin@10.31.101.102  # development-gitlab
 ```
 
 ## Prerequisites
 
 - Ansible installed on your local machine
-- SSH access to Proxmox host (192.168.31.10)
+- SSH access to Proxmox host (10.31.100.1)
 - Your SSH key added to SSH agent
 - Terraform has created the containers with SSH keys injected
 

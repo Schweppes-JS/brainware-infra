@@ -28,11 +28,19 @@ module "staging_1" {
   target_node     = var.staging_target_node
 }
 
+module "production_1" {
+  source          = "./pve/production_1"
+  ssh_public_keys = var.ssh_public_keys
+  user_password   = var.user_password
+  target_node     = var.production_target_node
+}
+
 # Generate Ansible inventory from Terraform outputs
 resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/templates/inventory.tpl", {
     development_1_virtualization_results = module.development_1.virtualization_results
     staging_1_virtualization_results     = module.staging_1.virtualization_results
+    production_1_virtualization_results  = module.production_1.virtualization_results
   })
   filename = "${path.module}/../ansible/inventories/virtualization/hosts.ini"
 }

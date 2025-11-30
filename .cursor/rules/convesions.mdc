@@ -23,6 +23,12 @@ alwaysApply: true
     │   ├── Jenkinsfile
     │   └── pipelines/
     │
+    │── scripts/        # Utility scripts for common operations
+    │   ├── post_install_pve.sh
+    │   ├── update_pves.sh
+    │   ├── update_vms.sh
+    │   └── restart_router_containers.sh
+    │
     │── docs/           # Documentation, diagrams
     │── .gitignore
     │── README.md
@@ -117,3 +123,21 @@ alwaysApply: true
 - Run `ansible-lint` for playbooks.
 - Keep `Jenkinsfile` clean with stages: **validate → plan → apply → configure → deploy**.
 - Write meaningful commit messages and PR descriptions.
+
+---
+
+## 10. Scripts Folder
+
+The `scripts/` folder contains utility scripts for common infrastructure operations:
+
+- **`post_install_pve.sh`** → SSH key setup and initial Proxmox configuration
+- **`update_pves.sh`** → Updates Proxmox hosts using Ansible
+- **`update_vms.sh`** → Updates VMs using Ansible
+- **`restart_router_containers.sh`** → Restarts router containers using Ansible
+
+These scripts provide convenient shortcuts for frequently performed maintenance tasks and initial setup procedures. All scripts should:
+
+- Be executable (`chmod +x`)
+- Include proper error handling
+- Use relative paths from the project root
+- Follow bash best practices

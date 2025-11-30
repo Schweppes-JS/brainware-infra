@@ -2,8 +2,6 @@
 - name: Configure Debian LXC Containers
   hosts: "{{ target_node | default('development-pve-1') }}"
   gather_facts: false
-  vars:
-    container_ip: "{{ container_ip }}"
   tasks:
     - name: Wait for container to be accessible via pct
       ansible.builtin.wait_for:

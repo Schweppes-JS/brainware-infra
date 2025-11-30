@@ -28,6 +28,11 @@ variable "user_password" {
   sensitive   = true
 }
 
+variable "production_target_node" {
+  type        = string
+  description = "Production Proxmox node to create the container on"
+}
+
 variable "staging_target_node" {
   type        = string
   description = "Staging Proxmox node to create the container on"

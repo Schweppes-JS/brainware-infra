@@ -6,31 +6,32 @@ terraform {
   }
 }
 
-# module "development_k8s_cluster" {
-#   source       = "../../modules/k8s-cluster"
-#   cluster_name = "development-k8s"
-#   template_id  = 901
+module "staging_1_ubuntu" {
+  source          = "../../modules/container/ubuntu"
+  hostname        = "staging-ubuntu"
+  ssh_public_keys = var.ssh_public_keys
+  network_ip      = "10.31.102.100/16"
+  target_node     = var.target_node
+  user_password   = var.user_password
+  vmid            = 2100
+}
 
-#   master_count      = 1
-#   master_cores      = 1
-#   master_memory     = 2048
-#   master_disk_size  = 16
-#   master_vmid_start = 300
+module "staging_1_alpine" {
+  source          = "../../modules/container/alpine"
+  hostname        = "staging-alpine"
+  ssh_public_keys = var.ssh_public_keys
+  network_ip      = "10.31.102.101/16"
+  target_node     = var.target_node
+  user_password   = var.user_password
+  vmid            = 2101
+}
 
-#   worker_count      = 2
-#   worker_cores      = 2
-#   worker_memory     = 4096
-#   worker_disk_size  = 32
-#   worker_vmid_start = 310
-# }
-
-# module "development_gitlab" {
-#   source          = "../../modules/container/alpine"
-#   hostname        = "development-gitlab"
-#   network_ip      = "192.168.31.13/24"
-#   ssh_public_keys = var.ssh_public_keys
-#   memory          = 256
-#   disk_size       = "32G"
-#   cores           = 1
-#   vmid            = 103
-# }
+module "staging_1_debian" {
+  source          = "../../modules/container/debian"
+  hostname        = "staging-debian"
+  ssh_public_keys = var.ssh_public_keys
+  network_ip      = "10.31.102.102/16"
+  target_node     = var.target_node
+  user_password   = var.user_password
+  vmid            = 2102
+}

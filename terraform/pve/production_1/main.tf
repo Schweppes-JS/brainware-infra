@@ -6,32 +6,32 @@ terraform {
   }
 }
 
-module "development_1_ubuntu" {
+module "production_1_ubuntu" {
   source          = "../../modules/container/ubuntu"
-  hostname        = "development-ubuntu"
+  hostname        = "production-ubuntu"
   ssh_public_keys = var.ssh_public_keys
-  network_ip      = "10.31.103.100/16"
+  network_ip      = "10.31.101.100/16"
   target_node     = var.target_node
   user_password   = var.user_password
-  vmid            = 3100
+  vmid            = 1100
 }
 
-module "development_1_alpine" {
+module "production_1_alpine" {
   source          = "../../modules/container/alpine"
-  hostname        = "development-alpine"
+  hostname        = "production-alpine"
   ssh_public_keys = var.ssh_public_keys
-  network_ip      = "10.31.103.101/16"
+  network_ip      = "10.31.101.101/16"
   target_node     = var.target_node
   user_password   = var.user_password
-  vmid            = 3101
+  vmid            = 1101
 }
 
-module "development_1_debian" {
+module "production_1_debian" {
   source          = "../../modules/container/debian"
-  hostname        = "development-debian"
+  hostname        = "production-debian"
   ssh_public_keys = var.ssh_public_keys
-  network_ip      = "10.31.103.102/16"
+  network_ip      = "10.31.101.102/16"
   target_node     = var.target_node
   user_password   = var.user_password
-  vmid            = 3102
+  vmid            = 1102
 }

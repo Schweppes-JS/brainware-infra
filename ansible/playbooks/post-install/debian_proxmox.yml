@@ -12,6 +12,9 @@
           - btop
           - nano
           - ufw
+          - libguestfs-tools
+          - sysstat
+          - samba
         state: present
 
     - name: Download SpeedTest CLI

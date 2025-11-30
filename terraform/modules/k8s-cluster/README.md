@@ -53,7 +53,7 @@ module "k8s_cluster" {
   lb_memory           = 2048
 
   # Network and storage
-  storage_pool   = "local-lvm"
+  storage_pool   = "ceph-osd"
   network_bridge = "vmbr0"
 }
 ```
@@ -72,7 +72,7 @@ module "k8s_cluster" {
 | cluster_name         | Name of the Kubernetes cluster                     | `string` | `"k8s-cluster"` |    no    |
 | target_node          | Target Proxmox node name                           | `string` | n/a             |   yes    |
 | template_id          | ID of the existing Proxmox template to clone from  | `number` | n/a             |   yes    |
-| storage_pool         | Storage pool for VM disks                          | `string` | `"local-lvm"`   |    no    |
+| storage_pool         | Storage pool for VM disks                          | `string` | `"ceph-osd"`    |    no    |
 | network_bridge       | Network bridge for VMs                             | `string` | `"vmbr0"`       |    no    |
 | master_vmid_start    | Starting VM ID for master nodes                    | `number` | `100`           |    no    |
 | master_cores         | Number of CPU cores for master nodes               | `number` | `2`             |    no    |

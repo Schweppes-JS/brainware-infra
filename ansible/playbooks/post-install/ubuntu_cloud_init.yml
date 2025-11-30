@@ -1,0 +1,53 @@
+---
+- name: Configure Ubuntu Cloud-Init
+  hosts: "{{ vm_ip }}"
+  gather_facts: false
+  vars:
+    ansible_user: "{{ user_name | default('schweppes') }}"
+    ansible_ssh_private_key_file: "{{ ssh_key_path | default('~/.ssh/id_rsa') }}"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+  tasks:
+    - name: Wait for container to be accessible via pct
+      ansible.builtin.wait_for:
+        timeout: 10
+    - name: Update package cache
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Upgrade all packages
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: true
+    - name: Install essential packages
+      ansible.builtin.apt:
+        name:
+          - bash
+          - curl
+          - wget
+          - nano
+          - openssh-server
+          - ufw
+          - sudo
+          - fail2ban
+          - qemu-guest-agent
+        state: present
+    - name: Start and enable fail2ban
+      ansible.builtin.systemd:
+        name: fail2ban
+        state: started
+        enabled: true
+    - name: Start and enable qemu-guest-agent
+      ansible.builtin.systemd:
+        name: qemu-guest-agent
+        state: started
+        enabled: true
+    - name: Configure UFW firewall
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - "22"
+        - "80"
+        - "443"
+    - name: Enable UFW firewall
+      community.general.ufw:
+        state: enabled
