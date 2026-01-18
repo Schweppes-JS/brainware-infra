@@ -10,11 +10,11 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   name        = var.name
   description = var.description
   target_node = var.target_node
-  # pool        = var.storage_pool
-  clone      = "ubuntu-cloud-init"
-  full_clone = false
-  agent      = 1
-  os_type    = "cloud-init"
+  vmid        = var.vmid
+  clone       = "ubuntu-cloud-init"
+  full_clone  = true
+  agent       = 1
+  os_type     = "cloud-init"
   cpu {
     cores   = var.cores
     sockets = 1
@@ -37,9 +37,9 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
     scsi {
       scsi0 {
         disk {
-          size      = 8
-          cache     = "writeback"
+          size      = var.disk_size_gb
           storage   = var.storage_pool
+          cache     = "writeback"
           replicate = true
         }
       }
@@ -56,8 +56,9 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
     id   = 0
     type = "socket"
   }
+  bios = "seabios"
   vga {
-    type   = "std"
+    type   = "serial0"
     memory = 16
   }
   boot       = "order=scsi0"
@@ -66,16 +67,12 @@ resource "proxmox_vm_qemu" "ubuntu_vm" {
   sshkeys    = var.ssh_public_keys
   ciuser     = var.username
   cipassword = var.password
-
   provisioner "local-exec" {
     command = <<-EOT
       ansible-playbook ${path.root}/../ansible/playbooks/post-install/ubuntu_cloud_init.yml \
-        -i ${path.root}/../ansible/inventories/pve/hosts.ini \
+        -i "${split("/", var.network_ip)[0]}," \
         -e "vm_ip='${split("/", var.network_ip)[0]}'" \
-        -e "vmid='${var.vmid}'" \
-        -e "target_node='${var.target_node}'" \
-        -e "user_name='${var.user_name}'" \
-        -e "ssh_key_path='~/.ssh/id_rsa'"
+        -e "user_name='${var.username}'" \
     EOT
   }
 }

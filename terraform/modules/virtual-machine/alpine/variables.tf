@@ -30,16 +30,23 @@ variable "cores" {
   default     = 1
 }
 
-variable "disk_size" {
-  description = "Disk size for the VM (e.g., '32G', '1T')"
+
+variable "disk_size_gb" {
+  description = "Disk size in GB (used for SCSI disk)"
+  type        = number
+  default     = 4
+}
+
+variable "clone_template" {
   type        = string
-  default     = "4G"
+  description = "Name of the existing Proxmox template to clone from"
+  default     = "alpine-cloud-init"
 }
 
 variable "template_id" {
   type        = number
   description = "ID of the existing Proxmox template to clone from"
-  default     = "local:vztmpl/alpine-standard-3.22.1-x86_64.iso"
+  default     = 101
 }
 
 variable "storage_pool" {
@@ -60,31 +67,44 @@ variable "description" {
   default     = "Alpine 3.22 VM"
 }
 
-# Cloud-init variables for IP configuration
-variable "ciuser" {
-  description = "Cloud-init user"
-  type        = string
-  default     = "schweppes"
-}
-
-variable "cipassword" {
-  description = "Cloud-init password"
-  type        = string
-  sensitive   = true
-}
-
 variable "ssh_public_keys" {
   description = "SSH public keys for cloud-init"
   type        = string
 }
 
-variable "static_ip" {
-  description = "Static IP address for the VM (e.g., '10.31.100.100/16')"
+variable "username" {
   type        = string
+  description = "Default username for cloud-init"
+  default     = "schweppes"
+  # sensitive   = true
+}
+
+variable "password" {
+  type        = string
+  description = "Default password for cloud-init (leave empty for key-based auth)"
+  default     = ""
+  # sensitive   = true
+}
+
+variable "network_ip" {
+  type        = string
+  description = "Static IP address for the VM (leave empty for DHCP)"
 }
 
 variable "gateway" {
+  type        = string
   description = "Gateway IP address"
   default     = "10.31.0.1"
-  type        = string
+}
+
+variable "start_on_boot" {
+  type        = bool
+  description = "Whether to start the VM on boot"
+  default     = true
+}
+
+variable "boot_order" {
+  type        = number
+  description = "Boot order priority (lower number = higher priority, 0 = disabled, 999 = start last)"
+  default     = 2
 }

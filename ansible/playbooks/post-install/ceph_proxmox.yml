@@ -62,8 +62,3 @@
       ansible.builtin.shell: |
         pvesh set /cluster/options --ha-rebalance-on-start 1
         pvesh set /cluster/options --shutdown-policy migrate
-
-    # - name: Reboot all nodes after Ceph configuration
-    #   ansible.builtin.reboot:
-    #     reboot_timeout: 300
-    #     test_command: uptime

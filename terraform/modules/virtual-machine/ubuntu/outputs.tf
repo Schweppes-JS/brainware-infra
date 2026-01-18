@@ -13,3 +13,7 @@ output "vm_user_name" {
   value       = var.username
 }
 
+output "vm_ip" {
+  description = "IP address of the VM"
+  value       = split("/", var.network_ip)[0]
+}

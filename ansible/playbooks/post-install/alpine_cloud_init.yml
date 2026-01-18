@@ -1,11 +1,12 @@
 ---
-- name: Configure Ubuntu Cloud-Init
+- name: Configure Alpine Cloud-Init
   hosts: "{{ vm_ip }}"
   gather_facts: false
   become: true
+  become_method: doas
   vars:
     ansible_user: "{{ user_name | default('schweppes') }}"
-    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   tasks:
     - name: Wait for VM to be accessible via SSH
       delegate_to: localhost
@@ -13,39 +14,59 @@
       ansible.builtin.wait_for:
         host: "{{ vm_ip }}"
         port: 22
-        delay: 10
-        timeout: 120
+        delay: 15
+        timeout: 180
         state: started
+    - name: Configure DNS resolvers
+      ansible.builtin.copy:
+        content: |
+          nameserver 10.31.0.1
+          search brainware.space
+        dest: /etc/resolv.conf
+        mode: "0644"
     - name: Update package cache
-      ansible.builtin.apt:
+      community.general.apk:
         update_cache: true
     - name: Upgrade all packages
-      ansible.builtin.apt:
-        upgrade: dist
-        autoremove: true
+      community.general.apk:
+        upgrade: true
     - name: Install essential packages
-      ansible.builtin.apt:
+      community.general.apk:
         name:
           - bash
           - curl
           - wget
           - nano
-          - openssh-server
+          - openssh
           - ufw
           - sudo
           - fail2ban
           - qemu-guest-agent
         state: present
     - name: Start and enable fail2ban
-      ansible.builtin.systemd:
+      ansible.builtin.service:
         name: fail2ban
         state: started
         enabled: true
     - name: Start and enable qemu-guest-agent
-      ansible.builtin.systemd:
+      ansible.builtin.service:
         name: qemu-guest-agent
         state: started
         enabled: true
+    - name: Reboot VM after configuration
+      ansible.builtin.reboot:
+        reboot_timeout: 120
+        pre_reboot_delay: 5
+        post_reboot_delay: 30
+    - name: Wait for VM to be accessible via SSH after reboot
+      delegate_to: localhost
+      become: false
+      ansible.builtin.wait_for:
+        host: "{{ vm_ip }}"
+        port: 22
+        delay: 15
+        timeout: 180
+        state: started
     - name: Configure UFW firewall
       community.general.ufw:
         rule: allow
@@ -57,26 +78,3 @@
     - name: Enable UFW firewall
       community.general.ufw:
         state: enabled
-    - name: Reboot VM after configuration
-      ansible.builtin.reboot:
-        reboot_timeout: 300
-        pre_reboot_delay: 5
-        post_reboot_delay: 30
-    - name: Wait for VM to be accessible via SSH after reboot
-      delegate_to: localhost
-      become: false
-      ansible.builtin.wait_for:
-        host: "{{ vm_ip }}"
-        port: 22
-        delay: 10
-        timeout: 120
-        state: started
-    - name: Verify critical services are running
-      ansible.builtin.command: systemctl is-active "{{ item }}"
-      register: service_check
-      changed_when: false
-      failed_when: service_check.rc != 0
-      loop:
-        - ssh
-        - fail2ban
-        - qemu-guest-agent
